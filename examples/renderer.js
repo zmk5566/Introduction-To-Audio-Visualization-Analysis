@@ -1,7 +1,11 @@
 //console.log("renderer.js loaded")
 
-const { Server } = require('node-osc');
+const { Server , Client} = require('node-osc');
 
+
+var oscClient = new Client('127.0.0.1', 7788);
+
+// create an osc client
 var oscServer = new Server(9699, '0.0.0.0', () => {
   console.log('OSC Server is listening');
   document.getElementById('osc_status').innerHTML="ON";
@@ -22,7 +26,7 @@ var oscServer = new Server(9699, '0.0.0.0', () => {
 oscServer.on('bundle', function (bundle) {
     bundle.elements.forEach((element, i) => {
         if (element[0].includes("/gyrosc/gyro")){
-            console.log(element);
+            //console.log(element);
             //console.log("The gyro message is: " + element[1] + " " + element[2] + " " + element[3])
             update_pan(element[1],element[2],element[3]);
         }
@@ -43,3 +47,56 @@ function update_pan(x,y,z){
     document.getElementById('roll').innerHTML=Math.round(z/Math.PI*180);
     update_global_config();
 }
+
+
+
+function triggerSound(azimuth, play_float, pitch_info, port = 9000){
+  // try to send a float on topic /azimuth_0, on a target port number
+  // map data from -1 to 1 to -60 to 60
+  azimuth = -azimuth*60;
+
+  console.log("The azimuth is: " + azimuth);
+  oscClient.send('/azimuth_0', azimuth );
+  //send a float to /Ambisonic_Spatial_Audio/Source__0/Play_Off_On
+  oscClient.send('/Ambisonic_Spatial_Audio/Source__0/Play_Off_On', play_float );
+
+  // send a float to /Ambisonic_Spatial_Audio/Source__0/Pitch
+  oscClient.send('/Ambisonic_Spatial_Audio/Source__0/Pitch', pitch_info );
+
+  console.log("info triggered");
+}
+
+function just_rotate(azimuth,pitch,roll){
+
+  // try to send a float on topic /azimuth_0, on a target port number
+  // map data from -1 to 1 to -60 to 60
+
+  azimuth = -azimuth*60;
+
+
+  console.log("The azimuth is: " + azimuth);
+  oscClient.send('/azimuth_0', azimuth );
+
+
+}
+
+
+
+//  function to trigger triggerSound after a certain second period of time
+function triggerSoundAfter(azimuth, play_float, pitch_info,time){
+  // transfer time into integer time
+  time = parseInt(time*1000);
+  console.log("The function will be triggered in" +time);
+    setTimeout(function(){
+        triggerSound(azimuth, play_float,pitch_info);
+    }
+    ,time);
+}
+
+//triggerSoundAfter(-1,1,500);
+
+
+out_trigger_sound_function = triggerSoundAfter;
+
+just_rotate_function = just_rotate;
+

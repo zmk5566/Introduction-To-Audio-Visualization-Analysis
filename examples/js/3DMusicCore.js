@@ -10,8 +10,10 @@ export class ThreeDimensionAuidoCore {
     this.audio_config = audio_config;
     this.players = [];
     this.sampler = [];
+    this.is_fault = true;
     this.sampler_keywords = ["casio", "salamander", "salamander"];
     this.init();
+    this.point_loc = 0;
   }
 
   init() {
@@ -79,7 +81,7 @@ export class ThreeDimensionAuidoCore {
   }
   dynamic_update_config(config) {
     this.audio_config = config;
-    console.log(config);
+    //console.log(config);
   }
 
   updatePan(index, timer_status, panX, panY, panZ) {
@@ -87,6 +89,29 @@ export class ThreeDimensionAuidoCore {
     //console.log(index,panX,panY,panZ);
     this.panners[index].setPosition(panX, panY, panZ);
   }
+
+  updateSpatial(){
+
+    var the_diff = -this.audio_config.audience_location.yaw/(2*Math.PI/3)
+    
+    just_rotate_function(the_diff+this.point_loc, 0, 0);
+  }
+
+  updatePanTotal(azimuth, pitch, roll) {
+
+    // use just rotate function to update the pan
+    //console.log("update pan total");
+
+    var the_diff = -this.audio_config.audience_location.yaw/(2*Math.PI/3)
+    just_rotate_function(+the_diff, pitch, roll);
+  
+
+  }
+
+  
+
+x
+
 
   playSpatialSound(index, uniform_data_height, panX, panY, panZ) {
     // first mode
@@ -117,6 +142,13 @@ export class ThreeDimensionAuidoCore {
 
     //console.log(now+index*this.audio_config.pitchnpan_interval/(this.num_of_sources+1),now+(index+1)*this.audio_config.pitchnpan_interval/(this.num_of_sources+1))
     if (this.audio_config.audio_channels[index].mute == false) {
+
+
+      if (this.is_fault){
+        out_trigger_sound_function(timer_status,1,0,index * interval);
+        out_trigger_sound_function(timer_status,0,0,(index+1) * interval);
+
+      }else{
       console.log(index);
 
 
@@ -125,6 +157,7 @@ export class ThreeDimensionAuidoCore {
       var over_past_time = 0.5;
       this.players[index].start(now + index * interval + time_balance);
       //this.panners[index].setPosition(panX, panY, panZ);
+      }
 
     } else {
       this.volumes[index].set({ "mute": true });
@@ -217,16 +250,57 @@ export class ThreeDimensionAuidoCore {
 
 
 
+  playSpatialSound(index, timer_status, panX, panY, panZ) {
+    var now = Tone.now();
+    var interval = this.audio_config.pitchnpan_interval / (this.num_of_sources + 1);
+    //console.log(now+index*this.audio_config.pitchnpan_interval/(this.num_of_sources+1),now+(index+1)*this.audio_config.pitchnpan_interval/(this.num_of_sources+1))
+    if (this.audio_config.audio_channels[index].mute == false) {
+      console.log(index);
+      if (this.is_fault){
+        this.point_loc = (timer_status-0.5)*2;
+        var the_diff = -this.audio_config.audience_location.yaw/(2*Math.PI/3)
+
+        out_trigger_sound_function(this.point_loc+the_diff,1,0,index * interval);
+        out_trigger_sound_function(this.point_loc+the_diff,0,0,(index+1) * interval);
+
+      }else{
+      this.synths[index].triggerAttack(this.caculate_freq(timer_status), now + index * interval);
+      this.synths[index].triggerRelease(now + interval * (index + 1));
+      
+      this.panners[index].setPosition(panX, panY, panZ);
+
+    }
+    } else {
+      this.volumes[index].set({ "mute": true });
+    }
+  }
+
+
+
   playPitchPanSound(index, timer_status, panX, panY, panZ) {
     var now = Tone.now();
     var interval = this.audio_config.pitchnpan_interval / (this.num_of_sources + 1);
     //console.log(now+index*this.audio_config.pitchnpan_interval/(this.num_of_sources+1),now+(index+1)*this.audio_config.pitchnpan_interval/(this.num_of_sources+1))
     if (this.audio_config.audio_channels[index].mute == false) {
       console.log(index);
+      if (this.is_fault){
+
+
+        console.log("current status",this.audio_config.audience_location.yaw/(2*Math.PI/3));
+        // the diff
+        var the_diff = this.audio_config.audience_location.yaw/(2*Math.PI/3)
+
+
+        out_trigger_sound_function(-the_diff,1,timer_status,index * interval);
+        out_trigger_sound_function(-the_diff,0,timer_status,(index+1) * interval);
+
+      }else{
       this.synths[index].triggerAttack(this.caculate_freq(timer_status), now + index * interval);
       this.synths[index].triggerRelease(now + interval * (index + 1));
       
       this.panners[index].setPosition(panX, panY, panZ);
+
+    }
     } else {
       this.volumes[index].set({ "mute": true });
     }

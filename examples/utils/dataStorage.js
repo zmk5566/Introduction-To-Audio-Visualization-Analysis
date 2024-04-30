@@ -98,6 +98,8 @@ var global_config =
     var play_function = [];
     var stop_function = [];
     var global_update_method = [];
+    var out_trigger_sound_function = [];
+    var just_rotate_function = [];
 
 
 

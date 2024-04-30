@@ -66,12 +66,13 @@ export class StateTimer {
 
     update_loop() {
 
+        if (this.config.audio_config.mode !== "spatial" ){
+            this.music_core.updatePanTotal(0,0,0);
+        }
 
         if (this.config.audio_config.mode === "spatial" || this.config.audio_config.mode === "pitchpoly") {
 
             this.totalData = this.chart.trigger_line_movement(this.timer);
-
-
 
             this.totalData.forEach((d, i) => {
                 this.process_each_data_point(d, i);
@@ -256,7 +257,7 @@ export class StateTimer {
     process_static_data_point(data_point, index) {
         var temp_index_position = 0.5;
 
-        console.log("static_point"+this.totalData.length);
+        //console.log("static_point"+this.totalData.length);
 
         // TODO this function need to be changed with a mapping function
         if (this.totalData.length !=1){
@@ -269,12 +270,16 @@ export class StateTimer {
         var [x_cord, y_cord, z_cord] =
             value2DtoCartersian(this.config.radius, temp_index_position, this.timer, 0, 1, -this.config.theta / 2, +this.config.theta / 2, 0, 1, -0.5, +0.5);
 
-        console.log(this.config.radius, temp_index_position, this.timer, -this.config.theta , this.config.theta )
-        console.log(x_cord, y_cord, z_cord);
+        //console.log(this.config.radius, temp_index_position, this.timer, -this.config.theta , this.config.theta )
+        //console.log(x_cord, y_cord, z_cord);
 
         var temp_coord = this.vis3d.get_localPoints(x_cord, y_cord, z_cord);
-        //console.log(temp_coord)
-        this.music_core.updatePan(index, this.uniform_value, temp_coord[1] * this.config.dynamic_scale, temp_coord[0] * this.config.dynamic_scale, temp_coord[2] * this.config.dynamic_scale);
+
+        this.music_core.updatePanTotal(0,0,0);
+
+
+
+        //this.music_core.updatePan(index, this.uniform_value, temp_coord[1] * this.config.dynamic_scale, temp_coord[0] * this.config.dynamic_scale, temp_coord[2] * this.config.dynamic_scale);
 
 
     }
@@ -288,7 +293,7 @@ export class StateTimer {
         var temp_coord = this.vis3d.get_localPoints(x_cord, y_cord, z_cord);
         //console.log("processing data pan", temp_coord)
         //update the pan
-        this.music_core.updatePan(index, this.timer, temp_coord[1] * this.config.dynamic_scale, temp_coord[0] * this.config.dynamic_scale, temp_coord[2] * this.config.dynamic_scale);
+        //this.music_core.updatePan(index, this.timer, temp_coord[1] * this.config.dynamic_scale, temp_coord[0] * this.config.dynamic_scale, temp_coord[2] * this.config.dynamic_scale);
     }
 
 
@@ -301,6 +306,11 @@ export class StateTimer {
 
             this.music_core.playSpatialSound(index, data_point.uniform_value, temp_coord[1] * this.config.dynamic_scale, temp_coord[0] * this.config.dynamic_scale, temp_coord[2] * this.config.dynamic_scale);
             this.vis3d.update_point(index, y_cord * this.config.dynamic_scale, z_cord * this.config.dynamic_scale, -x_cord * this.config.dynamic_scale, data_point.color);
+        
+        
+        
+        
+        
         } else if (this.config.audio_config.mode === "pitchnpan") {
 
 
@@ -347,7 +357,9 @@ export class StateTimer {
             var temp_coord = this.vis3d.get_localPoints(x_cord, y_cord, z_cord);
             //console.log(x_cord,y_cord,z_cord);
             //console.log(temp_coord);
-            this.music_core.playPercuPanSound(index, this.timer, temp_coord[1] * this.config.dynamic_scale, temp_coord[0] * this.config.dynamic_scale, temp_coord[2] * this.config.dynamic_scale);
+            this.music_core.playSpatialSound(index, data_point.uniform_value, temp_coord[1] * this.config.dynamic_scale, temp_coord[0] * this.config.dynamic_scale, temp_coord[2] * this.config.dynamic_scale);
+
+            //this.music_core.playPercuPanSound(index, this.timer, temp_coord[1] * this.config.dynamic_scale, temp_coord[0] * this.config.dynamic_scale, temp_coord[2] * this.config.dynamic_scale);
             this.vis3d.update_point(index, y_cord * this.config.dynamic_scale, 0 * this.config.dynamic_scale, -x_cord * this.config.dynamic_scale, data_point.color);
 
         } else if (this.config.audio_config.mode === "percnrepeat") {
