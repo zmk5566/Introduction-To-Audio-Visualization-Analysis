@@ -66,8 +66,11 @@ export class StateTimer {
 
     update_loop() {
 
-        if (this.config.audio_config.mode !== "spatial" ){
+        console.log(this.config.audio_config.mode);
+        if (this.config.audio_config.mode !== "percnpan" ){
             this.music_core.updatePanTotal(0,0,0);
+        }else{
+            this.music_core.updateSpatial();
         }
 
         if (this.config.audio_config.mode === "spatial" || this.config.audio_config.mode === "pitchpoly") {
@@ -275,7 +278,7 @@ export class StateTimer {
 
         var temp_coord = this.vis3d.get_localPoints(x_cord, y_cord, z_cord);
 
-        this.music_core.updatePanTotal(0,0,0);
+        //this.music_core.updatePanTotal(0,0,0);
 
 
 

@@ -55,8 +55,15 @@ function triggerSound(azimuth, play_float, pitch_info, port = 9000){
   // map data from -1 to 1 to -60 to 60
   azimuth = -azimuth*60;
 
+  if (play_float!=0){
+
   console.log("The azimuth is: " + azimuth);
   oscClient.send('/azimuth_0', azimuth );
+
+  }else{
+    console.log("The azimuth is: off");
+
+  }
   //send a float to /Ambisonic_Spatial_Audio/Source__0/Play_Off_On
   oscClient.send('/Ambisonic_Spatial_Audio/Source__0/Play_Off_On', play_float );
 

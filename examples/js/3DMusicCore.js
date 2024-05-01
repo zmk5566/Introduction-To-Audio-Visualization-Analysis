@@ -90,9 +90,19 @@ export class ThreeDimensionAuidoCore {
     this.panners[index].setPosition(panX, panY, panZ);
   }
 
+  get_the_diff(){
+
+    return -this.audio_config.audience_location.yaw/(2*Math.PI/3)*2;
+  }
+
   updateSpatial(){
 
-    var the_diff = -this.audio_config.audience_location.yaw/(2*Math.PI/3)
+    var the_diff = this.get_the_diff();
+
+    console.log(the_diff+this.point_loc);
+
+    console.log("update Spatial total");
+
     
     just_rotate_function(the_diff+this.point_loc, 0, 0);
   }
@@ -100,9 +110,9 @@ export class ThreeDimensionAuidoCore {
   updatePanTotal(azimuth, pitch, roll) {
 
     // use just rotate function to update the pan
-    //console.log("update pan total");
+    console.log("update pan total");
 
-    var the_diff = -this.audio_config.audience_location.yaw/(2*Math.PI/3)
+    var the_diff =this.get_the_diff();
     just_rotate_function(+the_diff, pitch, roll);
   
 
@@ -255,10 +265,10 @@ x
     var interval = this.audio_config.pitchnpan_interval / (this.num_of_sources + 1);
     //console.log(now+index*this.audio_config.pitchnpan_interval/(this.num_of_sources+1),now+(index+1)*this.audio_config.pitchnpan_interval/(this.num_of_sources+1))
     if (this.audio_config.audio_channels[index].mute == false) {
-      console.log(index);
       if (this.is_fault){
         this.point_loc = (timer_status-0.5)*2;
-        var the_diff = -this.audio_config.audience_location.yaw/(2*Math.PI/3)
+        var the_diff = this.get_the_diff();
+        console.log("current point loc"+this.point_loc);
 
         out_trigger_sound_function(this.point_loc+the_diff,1,0,index * interval);
         out_trigger_sound_function(this.point_loc+the_diff,0,0,(index+1) * interval);
@@ -285,10 +295,8 @@ x
       console.log(index);
       if (this.is_fault){
 
-
-        console.log("current status",this.audio_config.audience_location.yaw/(2*Math.PI/3));
         // the diff
-        var the_diff = this.audio_config.audience_location.yaw/(2*Math.PI/3)
+        var the_diff = this.get_the_diff();
 
 
         out_trigger_sound_function(-the_diff,1,timer_status,index * interval);
