@@ -45,7 +45,28 @@ function update_pan(x,y,z){
     document.getElementById('pitch').innerHTML=Math.round(y/Math.PI*180);
     document.getElementById('yaw').innerHTML=Math.round(x/Math.PI*180);
     document.getElementById('roll').innerHTML=Math.round(z/Math.PI*180);
+
+    rotator(x,y,z);
+
     update_global_config();
+}
+
+
+function rotator(yaw,pitch,roll){
+// try to send a float on topic /yaw , /pitch, /roll, on a target port number
+// map data from -PI to PI to -180 to 180
+yaw = yaw/Math.PI*180;
+// map data from -PI to PI to -90 to 90
+pitch =pitch/Math.PI*180;
+// map data from -PI to PI to -180 to 180
+roll = roll/Math.PI*180;
+  console.log("The yaw is: " + yaw);
+  console.log("The pitch is: " + pitch);
+  console.log("The roll is: " + roll);
+  oscClient.send('/yaw', yaw );
+  oscClient.send('/picth', pitch );
+  oscClient.send('/roll', roll );
+  console.log("info triggered");
 }
 
 

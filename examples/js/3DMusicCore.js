@@ -267,11 +267,10 @@ x
     if (this.audio_config.audio_channels[index].mute == false) {
       if (this.is_fault){
         this.point_loc = (timer_status-0.5)*2;
-        var the_diff = this.get_the_diff();
         console.log("current point loc"+this.point_loc);
 
-        out_trigger_sound_function(this.point_loc+the_diff,1,0,index * interval);
-        out_trigger_sound_function(this.point_loc+the_diff,0,0,(index+1) * interval);
+        out_trigger_sound_function(this.point_loc,1,0,index * interval);
+        out_trigger_sound_function(this.point_loc,0,0,(index+1) * interval);
 
       }else{
       this.synths[index].triggerAttack(this.caculate_freq(timer_status), now + index * interval);
@@ -294,13 +293,8 @@ x
     if (this.audio_config.audio_channels[index].mute == false) {
       console.log(index);
       if (this.is_fault){
-
-        // the diff
-        var the_diff = this.get_the_diff();
-
-
-        out_trigger_sound_function(-the_diff,1,timer_status,index * interval);
-        out_trigger_sound_function(-the_diff,0,timer_status,(index+1) * interval);
+        out_trigger_sound_function(0,1,timer_status,index * interval);
+        out_trigger_sound_function(0,0,timer_status,(index+1) * interval);
 
       }else{
       this.synths[index].triggerAttack(this.caculate_freq(timer_status), now + index * interval);

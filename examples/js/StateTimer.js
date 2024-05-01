@@ -67,11 +67,6 @@ export class StateTimer {
     update_loop() {
 
         console.log(this.config.audio_config.mode);
-        if (this.config.audio_config.mode !== "percnpan" ){
-            this.music_core.updatePanTotal(0,0,0);
-        }else{
-            this.music_core.updateSpatial();
-        }
 
         if (this.config.audio_config.mode === "spatial" || this.config.audio_config.mode === "pitchpoly") {
 
