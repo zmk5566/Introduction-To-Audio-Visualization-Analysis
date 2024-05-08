@@ -55,11 +55,11 @@ function update_pan(x,y,z){
 function rotator(yaw,pitch,roll){
 // try to send a float on topic /yaw , /pitch, /roll, on a target port number
 // map data from -PI to PI to -180 to 180
-yaw = yaw/Math.PI*180;
+yaw = - yaw/Math.PI*180;
 // map data from -PI to PI to -90 to 90
-pitch =pitch/Math.PI*180;
+pitch = -pitch/Math.PI*180;
 // map data from -PI to PI to -180 to 180
-roll = roll/Math.PI*180;
+roll = -roll/Math.PI*180;
   console.log("The yaw is: " + yaw);
   console.log("The pitch is: " + pitch);
   console.log("The roll is: " + roll);
